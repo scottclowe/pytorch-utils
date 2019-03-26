@@ -29,3 +29,28 @@ def cuda_is_really_available():
         return True
     except RuntimeError:
         return False
+
+
+def get_device_name(device=None):
+    r"""Get the name of a device, supporting both CPU and CUDA devices.
+
+    Arguments:
+        device (str or torch.device or int, optional): the device whose name will be queried.
+            If :attr:`device` is ``None`` (default), the current device is queried.
+
+    Returns:
+        str: the name of the device, if it is a cuda device, or ``'cpu'`` if the device is
+            ``torch.device('cpu')``. If :attr:`device` is ``None`` and at least one cuda
+            device is available, the name of the current cuda device is returned. If cuda is
+            unavailable, ``'cpu'`` is returned when :attr:`device` is ``None``.
+    """
+    if device is None:
+        if torch.cuda.is_available():
+            device = torch.cuda.current_device()
+        else:
+            device = 'cpu'
+
+    if device == 'cpu' or device == torch.device('cpu'):
+        return 'cpu'
+
+    return torch.cuda.get_device_name(device)
