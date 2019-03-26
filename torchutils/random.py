@@ -9,14 +9,6 @@ def seed_all(seed=None, only_current_gpu=False, mirror_gpus=False):
     Initialises the random number generators for random, numpy, and both CPU and GPU(s)
     for torch.
 
-    Note that you will also need to set::
-
-        torch.backends.cudnn.deterministic = True
-        torch.backends.cudnn.benchmark = False
-
-    in order to ensure experimental results are repeatible. However, enabling deterministic
-    mode may result in an impact on performance. See `link`_ for more details.
-
     Arguments:
         seed (int, optional): seed value to use for the random number generators.
             If :attr:`seed` is ``None`` (default), seeds are picked at random using
@@ -27,6 +19,20 @@ def seed_all(seed=None, only_current_gpu=False, mirror_gpus=False):
             the same seed, or different seeds. If :attr:`mirror_gpus` is ``False`` and
             :attr:`seed` is not ``None``, each device receives a different but
             deterministically determined seed. Default is ``False``.
+
+    Note that we override the settings for the cudnn backend whenever this function is
+    called. If :attr:`seed` is not ``None``, we set::
+
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
+
+    in order to ensure experimental results behave deterministically and are repeatible.
+    However, enabling deterministic mode may result in an impact on performance. See
+    `link`_ for more details. If :attr:`seed` is ``None``, we return the cudnn backend
+    to its performance-optimised default settings of::
+
+        torch.backends.cudnn.deterministic = False
+        torch.backends.cudnn.benchmark = True
 
     .. _link:
         https://pytorch.org/docs/stable/notes/randomness.html
@@ -63,6 +69,17 @@ def seed_all(seed=None, only_current_gpu=False, mirror_gpus=False):
     # with high entropy if none is given.
     s = seed if seed is not None else get_seed()
     torch.manual_seed(s)
+
+    if seed is None:
+        # Since seeds are random, we don't care about determinism and
+        # will set the backend up for optimal performance
+        torch.backends.cudnn.deterministic = False
+        torch.backends.cudnn.benchmark = True
+    else:
+        # Ensure cudNN is deterministic, so the results are consistent
+        # for this seed
+        torch.backends.cudnn.deterministic = True
+        torch.backends.cudnn.benchmark = False
 
     # Seed pytorch's random number generator on the GPU(s)
     if only_current_gpu:
