@@ -6,13 +6,13 @@ def cuda_is_really_available():
     Robustly checks to see if cuda is really available.
 
     We confirm the device is available by running dummy code on it,
-    instead of trusting the output of `torch.cuda.is_available`.
+    instead of trusting the output of ``torch.cuda.is_available``.
 
     This protects against the situation where a CUDA GPU is present, but
     its CUDA capability is lower than your version of pytorch supports.
-    In such a scenario, you will get a warning like:
+    In such a scenario, you will get a warning like::
 
-        Found GPU0 GeForce XXX which is of cuda capability X.Y.
+        Found GPU0 <name of GPU> which is of cuda capability M.N.
         PyTorch no longer supports this GPU because it is too old.
 
     and an error message
@@ -39,7 +39,7 @@ def get_device_name(device=None):
             If :attr:`device` is ``None`` (default), the current device is queried.
 
     Returns:
-        str: the name of the device, if it is a cuda device, or ``'cpu'`` if the device is
+        str: the name of the device, if it is a cuda device, or ``'cpu'`` if :attr:`device` is
             ``torch.device('cpu')``. If :attr:`device` is ``None`` and at least one cuda
             device is available, the name of the current cuda device is returned. If cuda is
             unavailable, ``'cpu'`` is returned when :attr:`device` is ``None``.
