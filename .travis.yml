@@ -32,6 +32,11 @@ env:
     # Run tests with newest and oldest dependencies
     - USE_OLDEST_DEPS="false"
     - USE_OLDEST_DEPS="true"
+  allow_failures:
+    - python: "2.7"
+      env: USE_OLDEST_DEPS="false"
+    - python: "2.7"
+      env: USE_OLDEST_DEPS="true"
 
 ###############################################################################
 # Setup the environment before installing
