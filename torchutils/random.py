@@ -56,7 +56,7 @@ def seed_all(seed=None, only_current_gpu=False, mirror_gpus=False):
             import os
             # Use system's source of entropy (on Linux, syscall `getrandom()`)
             s = int.from_bytes(os.urandom(4), byteorder="little")
-        except:
+        except AttributeError:
             from datetime import datetime
             # Get the current time in mircoseconds, and map to an integer
             # in the range [0, 2**32)
